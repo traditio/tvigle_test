@@ -1,3 +1,4 @@
+#coding=utf-8
 import datetime
 
 from sqlalchemy import and_
@@ -24,9 +25,12 @@ class AuthenticationController(Controller):
         return self.authenticated
 
 
-    def set_user_login_attempts(self, user, attempts_num, block_to=None):
+    def set_user_login_attempts(self, user, attempts_num):
         user.login_attempts = attempts_num
         if user.login_attempts > User.LOGIN_ATTEMPTS:
             user.blocked_to = datetime.datetime.now() + datetime.timedelta(hours=24)
+        #значит мы сбрасываем кол-во попыток входа юзера
+        if attempts_num == 0:
+            user.blocked_to = None
         self.session.add(user)
         self.session.commit()
